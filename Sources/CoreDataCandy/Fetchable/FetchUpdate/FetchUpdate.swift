@@ -14,64 +14,50 @@ extension Publishers {
         typealias Output = [Model]
         typealias Failure = Never
 
+        private let subject = PassthroughSubject<[Model], Never>()
         private let fetchController: NSFetchedResultsController<Model.Entity>
+        private var fetchControllerDelegate: FetchControllerDelegate?
 
         init(controller: NSFetchedResultsController<Model.Entity>) {
-            self.fetchController = controller
+            fetchController = controller
+            fetchControllerDelegate = FetchControllerDelegate(sendUpdate: sendUpdate)
+            fetchController.delegate = fetchControllerDelegate
+            // send a first value
+            try? fetchController.performFetch()
+            sendUpdate()
         }
 
         func receive<S>(subscriber: S) where S: Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
-            let subscription = FetchUpdateSubscription(subscriber: subscriber, model: Model.self, fetchController: fetchController)
-            subscriber.receive(subscription: subscription)
+            subject.receive(subscriber: subscriber)
         }
-    }
 
-    static func fetchUpdate<Model>(for type: Model.Type, fetchController: NSFetchedResultsController<Model.Entity>) -> FetchUpdate<Model> {
-        FetchUpdate<Model>(controller: fetchController)
+        private func sendUpdate() {
+            guard let objects = fetchController.fetchedObjects else { return }
+            subject.send(objects.map(Model.init))
+        }
     }
 }
 
-final class FetchUpdateSubscription<S: Subscriber, M: DatabaseModel>: NSObject, NSFetchedResultsControllerDelegate, Subscription
-where S.Input == [M] {
+extension Publishers.FetchUpdate {
 
-    var subscriber: S?
-    var requested: Subscribers.Demand = .none
-    private let fetchController: NSFetchedResultsController<M.Entity>
+    private final class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelegate {
 
-    func request(_ demand: Subscribers.Demand) {
-        requested += demand
-        guard requested > .none else {
-            subscriber?.receive(completion: .finished)
-            return
+        let sendUpdate: () -> Void
+
+        init(sendUpdate: @escaping () -> Void) {
+            self.sendUpdate = sendUpdate
         }
-        try? fetchController.performFetch()
-        sendFetchedObjectsUpdate()
+
+        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            sendUpdate()
+        }
     }
+}
 
-    func cancel() {
-        subscriber = nil
-    }
+extension Publishers {
 
-    init(subscriber: S, model: M.Type, fetchController: NSFetchedResultsController<M.Entity>) {
-        self.subscriber = subscriber
-        self.fetchController = fetchController
-
-        super.init()
-
-        fetchController.delegate = self
-    }
-
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        sendFetchedObjectsUpdate()
-    }
-
-    private func sendFetchedObjectsUpdate() {
-        guard
-            let objects = fetchController.fetchedObjects,
-            requested > .none
-        else { return }
-
-        requested -= .max(1)
-        _ = subscriber?.receive(objects.map(M.init))
+    static func fetchUpdate<Model>(for type: Model.Type, fetchController: NSFetchedResultsController<Model.Entity>)
+    -> FetchUpdate<Model> {
+        FetchUpdate<Model>(controller: fetchController)
     }
 }
