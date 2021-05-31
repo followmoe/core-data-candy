@@ -22,7 +22,7 @@ public protocol DatabaseModel: Fetchable, Hashable, CustomDebugStringConvertible
 
     // MARK: - Initialisation
 
-    /// Instantiate the `DatabaseModel`. It's the oppurtinity to perform
+    /// Instantiate the `DatabaseModel`. It's the opportunity to perform
     /// some code on the `entity` if needed, as the `entity` will then be hidden
     /// behind the `_entityWrapper`
     init(entity: Entity)
