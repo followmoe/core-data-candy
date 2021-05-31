@@ -13,9 +13,6 @@ public protocol ChildrenInterfaceProtocol {
     associatedtype MutableStorage: RelationMutableStorage
 
     var keyPath: ReferenceWritableKeyPath<Entity, MutableStorage.Immutable?> { get }
-
-    func add(_ child: ChildModel, on entity: Entity)
-    func remove(_ child: ChildModel, on entity: Entity)
 }
 
 extension ChildrenInterfaceProtocol {

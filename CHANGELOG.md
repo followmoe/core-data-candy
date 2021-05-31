@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. `CoreDataCandy` adheres to [Semantic Versioning](http://semver.org).
 
 ---
+## [1.2.0](https://github.com/ABridoux/core-data-candy/tree/1.2.0) (31/05/2021)
+### Added
+- Draft features to modify a model without impacting the view context. Then to merge the modifications. [#2]
+
+### Changed
+- `FetchUpdate`  moved from full custom publisher to wrapper around `NSFetchedResultsController` with a `PassthroughSubject`.
+
 ## [1.1.0](https://github.com/amaris/core-data-candy/tree/1.1.0) (22/04/2021)
 
 ### Added
