@@ -133,6 +133,19 @@ public protocol DatabaseModel: Fetchable, Hashable, CustomDebugStringConvertible
         in context: NSManagedObjectContext?)
     -> AnyPublisher<[Self], Never>
 
+    /// Return a `FetchedResultController` setup with the provided request and sorts
+    /// - Parameters:
+    ///   - sort: First required sort to use for the fetch request
+    ///   - additionalSorts: Additional sorts to be used to sort the models
+    ///   - request: A custom request to use
+    ///   - context: The context where to perform the request.
+    static func updatePublisher(
+        sortingBy sort: SortDescriptor<Entity>,
+        _ additionalSorts: SortDescriptor<Entity>...,
+        for request: NSFetchRequest<Entity>?,
+        in context: NSManagedObjectContext?)
+    -> NSFetchedResultsController<Entity>
+
     // MARK: Delete
 
     /// Delete the model entity from its context
