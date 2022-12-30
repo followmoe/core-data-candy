@@ -6,7 +6,7 @@
 import Foundation
 
 /// A `Codable` object used as the codable model of a `CodableConvertible`
-public protocol CodableConvertibleModel: Codable {
+public protocol CodableConvertibleModel<Convertible>: Codable {
     associatedtype Convertible: CodableConvertible
 
     /// The  `CodableConvertible` to output
@@ -14,7 +14,7 @@ public protocol CodableConvertibleModel: Codable {
 }
 
 /// Can be converted  to a  `CodableConvertibleModel`
-public protocol CodableConvertible {
+public protocol CodableConvertible<CodableModel> {
     associatedtype CodableModel: CodableConvertibleModel where CodableModel.Convertible == Self
 
     /// The  `CodableConvertibleModel` to store
