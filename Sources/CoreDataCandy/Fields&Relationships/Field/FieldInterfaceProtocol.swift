@@ -30,7 +30,7 @@ public protocol FieldInterfaceProtocol: FieldPublisher, FieldModifier {
     var validation: Validation<Value> { get }
 
     /// Emits the conversion errors thrown during conversion to store the data or output the stored data
-    var conversionErrorPublisher: AnyPublisher<ConversionError, Never> { get }
+    var conversionErrorPublisher: any Publisher<ConversionError, Never> { get }
 
     // MARK: - Initialisation
 
@@ -60,10 +60,9 @@ public extension FieldInterfaceProtocol {
 
 public extension FieldInterfaceProtocol where Entity: NSManagedObject {
 
-    func publisher(for entity: Entity) -> AnyPublisher<Value, Never> {
+    func publisher(for entity: Entity) -> any Publisher<Value, Never> {
         entity.publisher(for: keyPath)
             .map { [outputConversion] dbValue in outputConversion(dbValue) }
-            .eraseToAnyPublisher()
     }
 }
 

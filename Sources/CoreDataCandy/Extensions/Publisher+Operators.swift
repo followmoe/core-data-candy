@@ -12,7 +12,7 @@ public extension Publisher {
     }
 
     /// Try to validate the value for the given field
-    func tryValidate<Model: DatabaseModel, F: FieldModifier>(for keyPath: KeyPath<Model, F>, on model: Model) -> AnyPublisher<Output, CoreDataCandyError>
+    func tryValidate<Model: DatabaseModel, F: FieldModifier>(for keyPath: KeyPath<Model, F>, on model: Model) -> any Publisher<Output, CoreDataCandyError>
     where F.Value == Output, F.Entity == Model.Entity {
 
         return tryMap { value in
@@ -20,7 +20,6 @@ public extension Publisher {
             return value
         }
         .mapError { $0 as? CoreDataCandyError ?? .unknown }
-        .eraseToAnyPublisher()
     }
 
     /// Assign the value to the field of the model, with a possibility to handle the validation error
@@ -57,12 +56,12 @@ public extension Publisher {
 extension Publisher where Output: Collection, Output.Element: DatabaseModel {
 
     /// Sort the children by the first criteria, then by the additional ones
-    func sorted(by sort: Sort<Output.Element.Entity>, _ additionalSorts: Sort<Output.Element.Entity>...) -> AnyPublisher<[Output.Element], Failure> {
-        map { $0.sorted(by: [sort] + additionalSorts) }.eraseToAnyPublisher()
+    func sorted(by sort: Sort<Output.Element.Entity>, _ additionalSorts: Sort<Output.Element.Entity>...) -> any Publisher<[Output.Element], Failure> {
+        map { $0.sorted(by: [sort] + additionalSorts) }
     }
 
     /// Sort the children by the first criteria, then by the additional ones
-    func sorted(by sorts: [Sort<Output.Element.Entity>]) -> AnyPublisher<[Output.Element], Failure> {
-        map { $0.sorted(by: sorts) }.eraseToAnyPublisher()
+    func sorted(by sorts: [Sort<Output.Element.Entity>]) -> any Publisher<[Output.Element], Failure> {
+        map { $0.sorted(by: sorts) }
     }
 }

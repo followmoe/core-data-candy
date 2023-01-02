@@ -53,7 +53,7 @@ public extension DatabaseModel {
     func publisher<F: FieldPublisher & ChildrenInterfaceProtocol>(
         for keyPath: KeyPath<Self, F>,
         sortedBy sorts: Sort<F.ChildModel.Entity>...)
-    -> AnyPublisher<F.Output, Never>
+    -> any Publisher<F.Output, Never>
     where F.Entity == Entity, F.Output == [F.ChildModel] {
         self[keyPath: keyPath].publisher(for: entity, sortedBy: sorts)
     }

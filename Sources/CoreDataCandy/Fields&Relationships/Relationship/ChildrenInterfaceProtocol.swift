@@ -43,12 +43,11 @@ public extension ChildrenInterfaceProtocol where Entity: NSManagedObject, ChildM
     typealias Output = [ChildModel]
     typealias StoreConversionError = Never
 
-    func publisher(for entity: Entity) -> AnyPublisher<Output, Never> {
+    func publisher(for entity: Entity) -> any Publisher<Output, Never> {
         entity.publisher(for: keyPath)
             .replaceNil(with: .init())
             .map(\.array)
             .map(childModels)
-            .eraseToAnyPublisher()
     }
 
     private func childModels(from entities: [Any]) -> Output { entities.map(childModel) }
@@ -67,9 +66,8 @@ public extension ChildrenInterfaceProtocol where Entity: NSManagedObject, ChildM
 
 extension ChildrenInterfaceProtocol where Self: FieldPublisher, Self.Output == [ChildModel], ChildModel.Entity: DatabaseEntity, Entity: NSManagedObject {
 
-    func publisher(for entity: Entity, sortedBy sorts: [Sort<ChildModel.Entity>]) -> AnyPublisher<Output, Never> {
+    func publisher(for entity: Entity, sortedBy sorts: [Sort<ChildModel.Entity>]) -> any Publisher<Output, Never> {
         publisher(for: entity)
             .sorted(by: sorts)
-            .eraseToAnyPublisher()
     }
 }

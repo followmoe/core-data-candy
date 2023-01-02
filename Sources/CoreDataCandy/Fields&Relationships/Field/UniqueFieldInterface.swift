@@ -8,7 +8,7 @@ import Combine
 
 /// A field that has to be is unique in the entity table
 public struct UniqueFieldInterface<FieldValue: DatabaseFieldValue & Equatable, Value, Entity: DatabaseEntity>: FieldInterfaceProtocol, ConversionErrorObservable {
-
+    
     // MARK: - Constants
 
     public typealias OutputConversion = (FieldValue) -> Value
@@ -22,7 +22,7 @@ public struct UniqueFieldInterface<FieldValue: DatabaseFieldValue & Equatable, V
     public let validation: Validation<Value>
 
     let errorSubject = PassthroughSubject<ConversionError, Never>()
-    public var conversionErrorPublisher: AnyPublisher<ConversionError, Never> { errorSubject.eraseToAnyPublisher() }
+    public var conversionErrorPublisher: any Publisher<ConversionError, Never> { errorSubject }
 
     // MARK: - Initialisation
 

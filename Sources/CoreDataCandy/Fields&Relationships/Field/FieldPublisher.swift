@@ -12,5 +12,5 @@ public protocol FieldPublisher {
     associatedtype Output
 
     /// A publisher for the given entity property with an ouput conversion
-    func publisher(for entity: Entity) -> AnyPublisher<Output, Never>
+    func publisher(for entity: Entity) -> any Publisher<Output, Never>
 }

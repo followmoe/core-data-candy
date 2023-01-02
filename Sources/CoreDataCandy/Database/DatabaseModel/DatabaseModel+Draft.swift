@@ -121,7 +121,7 @@ public extension DatabaseModelDraft {
     }
 
     /// Publisher for the given field
-    func publisher<F: FieldPublisher>(for keyPath: KeyPath<Model, F>) -> AnyPublisher<F.Output, Never>
+    func publisher<F: FieldPublisher>(for keyPath: KeyPath<Model, F>) -> any Publisher<F.Output, Never>
     where F.Entity == Model.Entity {
         model.publisher(for: keyPath)
     }

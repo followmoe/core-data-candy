@@ -22,7 +22,7 @@ public struct FieldInterface<FieldValue: DatabaseFieldValue, Value, Entity: Data
     public let validation: Validation<Value>
 
     let errorSubject = PassthroughSubject<ConversionError, Never>()
-    public var conversionErrorPublisher: AnyPublisher<ConversionError, Never> { errorSubject.eraseToAnyPublisher() }
+    public var conversionErrorPublisher: any Publisher<ConversionError, Never> { errorSubject }
 
     // MARK: - Initialisation
 

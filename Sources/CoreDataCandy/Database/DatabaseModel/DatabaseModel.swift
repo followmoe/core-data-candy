@@ -60,7 +60,7 @@ public protocol DatabaseModel: Fetchable, Hashable, CustomDebugStringConvertible
     // MARK: Field publisher
 
     /// Publisher for the given field
-    func publisher<F: FieldPublisher>(for keyPath: KeyPath<Self, F>) -> AnyPublisher<F.Output, Never>
+    func publisher<F: FieldPublisher>(for keyPath: KeyPath<Self, F>) -> any Publisher<F.Output, Never>
     where F.Entity == Entity
 
     // MARK: Children
@@ -97,7 +97,7 @@ public protocol DatabaseModel: Fetchable, Hashable, CustomDebugStringConvertible
     func publisher<F: FieldPublisher & ChildrenInterfaceProtocol>(
         for keyPath: KeyPath<Self, F>,
         sortedBy sorts: Sort<F.ChildModel.Entity>...)
-    -> AnyPublisher<F.Output, Never>
+    -> any Publisher<F.Output, Never>
     where F.Entity == Entity, F.Output == [F.ChildModel]
 
     // MARK: Parent
@@ -131,7 +131,7 @@ public protocol DatabaseModel: Fetchable, Hashable, CustomDebugStringConvertible
         _ additionalSorts: SortDescriptor<Entity>...,
         for request: NSFetchRequest<Entity>?,
         in context: NSManagedObjectContext?)
-    -> AnyPublisher<[Self], Never>
+    -> any Publisher<[Self], Never>
 
     /// Return a `FetchedResultController` setup with the provided request and sorts
     /// - Parameters:

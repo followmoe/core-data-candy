@@ -27,11 +27,11 @@ extension DatabaseModel {
         _ additionalSorts: SortDescriptor<Entity>...,
         for request: NSFetchRequest<Entity>? = nil,
         in context: NSManagedObjectContext? = Self.context)
-    -> AnyPublisher<[Self], Never> {
+    -> any Publisher<[Self], Never> {
 
         guard let context = context else {
             assertionFailure(noContextMessage)
-            return Just([]).eraseToAnyPublisher()
+            return Just([])
         }
 
         let controller = updateResultController(
@@ -40,7 +40,6 @@ extension DatabaseModel {
             in: context)
 
         return Publishers.fetchUpdate(for: Self.self, fetchController: controller)
-            .eraseToAnyPublisher()
     }
 
     /// Return a `FetchedResultController` setup with the provided request and sorts
